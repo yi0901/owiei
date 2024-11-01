@@ -15,7 +15,8 @@ jobs:
         script:
           - 'code/ecolondon.py'
           - 'code/econy.py'
-   
+          - 'code/buslondon.py'
+          - 'code/busny.py'   
 
     steps:
     - name: Checkout repository
