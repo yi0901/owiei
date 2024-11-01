@@ -1,9 +1,9 @@
-name: Run Python Scripts Automatically in Pairs
+name: Run Python Scripts Automatically in longterm
 
 on:
   schedule:
     # 每日台灣時間13:00
-    - cron: '40 14 * * *'  # 注意: GitHub Actions 使用 UTC 時間，台灣時間早上6點相當於 UTC 22:00
+    - cron: '40 15 * * *'  # 注意: GitHub Actions 使用 UTC 時間，台灣時間早上6點相當於 UTC 22:00
 
 jobs:
   run-scripts:
@@ -14,9 +14,7 @@ jobs:
       matrix:
         script:
           - 'code/ecolondon.py'
-          - 'code/econy.py'
-          - 'code/buslondon.py'
-          - 'code/busny.py'   
+           
 
     steps:
     - name: Checkout repository
