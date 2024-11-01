@@ -20,12 +20,13 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4  # 確保使用最新版本
+      uses: actions/checkout@v4  # 確保使用最新
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5  # 升级到 v5 版本以支持 Node.js 20
       with:
         python-version: '3.x'
+
 
     - name: Install dependencies
       run: |
