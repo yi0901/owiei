@@ -50,12 +50,57 @@ options.add_argument("--headless")
 service = Service("/usr/bin/chromedriver")
 driver = webdriver.Chrome(service=service, options=options)
 
+def initialize_driver():
+    return webdriver.Chrome(service=service, options=options)
+
+driver = initialize_driver()
+
+def retry(function, max_retries=3, delay=2):
+    """重試機制的通用函數"""
+    retries = 0
+    while retries < max_retries:
+        try:
+            result = function()  # 嘗試執行目標函數
+            if result is not None:
+                return result
+        except (NoSuchElementException, TimeoutException, NoSuchWindowException, ElementClickInterceptedException, StaleElementReferenceException) as e:
+            retries += 1
+            print(f"重試第 {retries} 次，等待 {delay} 秒後重試... ({e})")
+            time.sleep(delay)
+            if isinstance(e, NoSuchWindowException):
+                global driver
+                driver.quit()
+                driver = initialize_driver()
+    print("達到最大重試次數，操作失敗")
+    return None
+
+def scroll_to_element(element):
+    driver.execute_script("arguments[0].scrollIntoView(true);", element)
+
+def click_element(element):
+    try:
+        element.click()
+        return True
+    except ElementClickInterceptedException:
+        print("元素被遮擋，嘗試滾動到元素位置")
+        scroll_to_element(element)
+        time.sleep(1)
+        try:
+            element.click()
+            return True
+        except ElementClickInterceptedException:
+            print("使用 JavaScript 點擊元素")
+            driver.execute_script("arguments[0].click();", element)
+            return True
+    except Exception as e:
+        print(f"點擊元素失敗: {e}")
+        return False
+
 def scrape_flights(start_date_str, end_date_str):
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
     delta = timedelta(days=1)
     success_count = 0  # 總共抓取的航班數量
-
     # 迴圈遍歷每個日期
     current_date = start_date
     while current_date <= end_date:
