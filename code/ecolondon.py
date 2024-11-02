@@ -63,46 +63,60 @@ def scrape_flights(start_date_str, end_date_str):
         url = "https://www.google.com/travel/flights/search?tfs=CBwQAhoqEgoyMDI1LTAxLTE5KAFqDAgCEggvbS8wZnRreHIMCAMSCC9tLzA2eTU3QAFIAXABggELCP___________wGYAQI&tfu=EgYIBRABGAA&hl=zh-TW&gl=TW"
         driver.get(url)
 
-        # 點擊日期選擇器
+       # 點擊日期選擇器
         try:
             departure_date_picker = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.CLASS_NAME, 'TP4Lpb'))
             )
-            departure_date_picker.click()
+            click_element(departure_date_picker)
             print("成功點擊出發日期選擇器")
-        except (NoSuchElementException, ElementNotInteractableException) as e:
-            print("無法找到或點擊出發日期選擇器", e)
-            current_date += delta
-            continue  # 跳到下一個日期
+        except Exception as e:
+            print("無法找到出發日期選擇器", e)
 
-        time.sleep(1)
+        time.sleep(3)  # 增加等待時間以確保日曆加載完成
 
         # 選擇具體日期
-        try:
+        def select_date(xpath):
             specific_date = WebDriverWait(driver, 20).until(
-                EC.element_to_be_clickable((By.XPATH, f"//div[@class='WhDFk Io4vne' and @data-iso='{current_date.strftime('%Y-%m-%d')}']//div[@role='button']"))
+                EC.element_to_be_clickable((By.XPATH, xpath))
             )
-            driver.execute_script("arguments[0].scrollIntoView();", specific_date)  # 滾動到該元素
-            specific_date.click()
-            print(f"成功選擇出發日期 {current_date.strftime('%Y 年 %m 月 %d 日')}")
-        except Exception as e:
-            print(f"無法選擇出發日期 {current_date.strftime('%Y 年 %m 月 %d 日')}", e)
-            current_date += delta
-            continue
+            if specific_date:
+                scroll_to_element(specific_date)
+                click_element(specific_date)
+                print(f"成功選擇出發日期 {current_date.strftime('%Y 年 %m 月 %d 日')}")
+                return True
+            return None
+
+        xpaths = [
+            f"//div[@class='WhDFk Io4vne' and @data-iso='{current_date.strftime('%Y-%m-%d')}']//div[@role='button']",
+            f"//div[@class='WhDFk Io4vne Xu6rJc' and @data-iso='{current_date.strftime('%Y-%m-%d')}']//div[@role='button']",
+            f"//div[@class='WhDFk Io4vne inxqCf' and @data-iso='{current_date.strftime('%Y-%m-%d')}']//div[@role='button']",
+            f"//div[@class='WhDFk Io4vne OqiQxf' and @data-iso='{current_date.strftime('%Y-%m-%d')}']//div[@role='button']",
+            f"//div[@class='p1BRgf KQqAEc' and @data-iso='{current_date.strftime('%Y-%m-%d')}']//div[@role='button']"
+        ]
+
+        date_selected = False
+        for xpath in xpaths:
+            if retry(lambda: select_date(xpath)):
+                date_selected = True
+                break
+
+        if not date_selected:
+            print(f"無法選擇出發日期 {current_date.strftime('%Y 年 %m 月 %d 日')}")
+            current_date += delta  # 如果無法選擇，繼續到下一個日期
+            continue  # 跳過當前迭代，進入下一個日期
 
         # 點擊 "Done" 按鈕
         try:
             done_button = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, '//div[@class="WXaAwc"]//div//button'))
             )
-            driver.execute_script("arguments[0].scrollIntoView();", done_button)  # 滾動到該元素
-            done_button.click()
+            click_element(done_button)
             print("成功點擊 'Done' 按鈕")
-        except (NoSuchElementException, ElementClickInterceptedException) as e:
-            print("無法找到或點擊 'Done' 按鈕", e)
-            current_date += delta
-            continue
-
+        except Exception as e:
+            print("無法找到 'Done' 按鈕", e)
+        
+        
         time.sleep(5)
 
         # 獲取所有航班連結
