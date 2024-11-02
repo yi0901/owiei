@@ -59,20 +59,21 @@ def scrape_flights(start_date_str, end_date_str):
     # 迴圈遍歷每個日期
     current_date = start_date
     while current_date <= end_date:
-        print(f"正在抓取日期: {current_date.strftime('%Y-%m-%d')}")
-        url ="https://www.google.com/travel/flights/search?tfs=CBwQAholEgoyMDI1LTAxLTE5KAFqDAgCEggvbS8wZnRreHIHCAESA0pGS0ABSANwAYIBCwj___________8BmAEC&tfu=EgYIABABGAA&hl=zh-TW&gl=TW"
-        driver.get(url)
+    print(f"正在抓取日期: {current_date.strftime('%Y-%m-%d')}")
+    url = "https://www.google.com/travel/flights/search?tfs=CBwQAholEgoyMDI1LTAxLTE5KAFqDAgCEggvbS8wZnRreHIHCAESA0pGS0ABSANwAYIBCwj___________8BmAEC&tfu=EgYIABABGAA&hl=zh-TW&gl=TW"
+    driver.get(url)
 
-          try:
-            departure_date_picker = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CLASS_NAME, 'TP4Lpb'))
-            )
-            click_element(departure_date_picker)
-            print("成功點擊出發日期選擇器")
-        except Exception as e:
-            print("無法找到出發日期選擇器", e)
+    try:
+        departure_date_picker = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CLASS_NAME, 'TP4Lpb'))
+        )
+        click_element(departure_date_picker)
+        print("成功點擊出發日期選擇器")
+    except Exception as e:
+        print("無法找到出發日期選擇器", e)
 
-        time.sleep(3)  # 增加等待時間以確保日曆加載完成
+    time.sleep(3)  # 增加等待時間以確保日曆加載完成
+
         # 選擇具體日期
         def select_date(xpath):
             specific_date = WebDriverWait(driver, 20).until(
