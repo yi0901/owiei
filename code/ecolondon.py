@@ -323,6 +323,7 @@ def scrape_flights(start_date_str, end_date_str):
 today_str = datetime.now().strftime("%Y-%m-%d")
 start_date_input, end_date_input = calculate_dates(today_str)
 
+
 try:
     success_count = scrape_flights(start_date_input, end_date_input)
     # send_discord_notification(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
