@@ -40,6 +40,10 @@ service = Service("/usr/bin/chromedriver")
 driver = webdriver.Chrome(service=service, options=options)
 
 
+def initialize_driver():
+    return webdriver.Chrome(service=service, options=options)
+
+driver = initialize_driver()
 
 def retry(function, max_retries=3, delay=2):
     """重試機制的通用函數"""
