@@ -19,12 +19,12 @@ import re
 
 # 發送 Discord 通知的函數
 #def send_discord_notification(message):
- #   data = {"content": message}
-  #  response = requests.post(WEBHOOK_URL, data=json.dumps(data), headers={"Content-Type": "application/json"})
-   # if response.status_code == 204:
-    #    logging.info("Discord 通知發送成功")
-    #else:
-     #   logging.error(f"Failed to send Discord notification: {response.status_code}, {response.text}")
+#    data = {"content": message}
+#    response = requests.post(WEBHOOK_URL, data=json.dumps(data), headers={"Content-Type": "application/json"})
+#    if response.status_code == 204:
+#        logging.info("Discord 通知發送成功")
+#    else:
+#        logging.error(f"Failed to send Discord notification: {response.status_code}, {response.text}")
 
 def calculate_dates(today_date_str):
     today = datetime.strptime(today_date_str, "%Y-%m-%d")
@@ -59,20 +59,20 @@ def scrape_flights(start_date_str, end_date_str):
     # 迴圈遍歷每個日期
     current_date = start_date
     while current_date <= end_date:
-    print(f"正在抓取日期: {current_date.strftime('%Y-%m-%d')}")
-    url = "https://www.google.com/travel/flights/search?tfs=CBwQAholEgoyMDI1LTAxLTE5KAFqDAgCEggvbS8wZnRreHIHCAESA0pGS0ABSANwAYIBCwj___________8BmAEC&tfu=EgYIABABGAA&hl=zh-TW&gl=TW"
-    driver.get(url)
+        print(f"正在抓取日期: {current_date.strftime('%Y-%m-%d')}")
+        url = "https://www.google.com/travel/flights/search?tfs=CBwQAholEgoyMDI1LTAxLTE5KAFqDAgCEggvbS8wZnRreHIHCAESA0pGS0ABSANwAYIBCwj___________8BmAEC&tfu=EgYIABABGAA&hl=zh-TW&gl=TW"
+        driver.get(url)
 
-    try:
-        departure_date_picker = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CLASS_NAME, 'TP4Lpb'))
-        )
-        click_element(departure_date_picker)
-        print("成功點擊出發日期選擇器")
-    except Exception as e:
-        print("無法找到出發日期選擇器", e)
+        try:
+            departure_date_picker = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.CLASS_NAME, 'TP4Lpb'))
+            )
+            click_element(departure_date_picker)
+            print("成功點擊出發日期選擇器")
+        except Exception as e:
+            print("無法找到出發日期選擇器", e)
 
-    time.sleep(3)  # 增加等待時間以確保日曆加載完成
+        time.sleep(3)  # 增加等待時間以確保日曆加載完成
 
         # 選擇具體日期
         def select_date(xpath):
@@ -114,7 +114,6 @@ def scrape_flights(start_date_str, end_date_str):
             print("成功點擊 'Done' 按鈕")
         except Exception as e:
             print("無法找到 'Done' 按鈕", e)
-        
         
         time.sleep(5)
 
@@ -167,10 +166,9 @@ start_date_input, end_date_input = calculate_dates(today_str)
 
 try:
     success_count = scrape_flights(start_date_input, end_date_input)
-  #  send_discord_notification(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
+    # send_discord_notification(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
 except Exception as e:
- #   send_discord_notification(f"航班抓取失敗: {e}")
+    # send_discord_notification(f"航班抓取失敗: {e}")
     success_count = 0
 
 print(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
-
