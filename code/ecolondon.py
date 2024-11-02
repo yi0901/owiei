@@ -161,12 +161,19 @@ def scrape_flights(start_date_str, end_date_str):
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
                        
+        today_date = datetime.now().strftime("%m%d")
         
+        # 確保 'data/' 目錄存在
+        output_directory = 'data'
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
         
         # 準備寫入 CSV 檔案
         with open(f'{output_directory}/busny_{today_date}.csv', 'a', newline='', encoding='utf-8-sig') as csv_file:
             csv_writer = csv.writer(csv_file)
 
+        
+        
             # 寫入標題
             csv_writer.writerow([
                 "出發日期", "出發時間", "出發機場代號", 
