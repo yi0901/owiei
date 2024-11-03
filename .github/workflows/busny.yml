@@ -1,4 +1,4 @@
-name: Run Python Scripts Automatically in longterm
+name: Run Python Scripts Automatically in busny
 
 on:
   schedule:
