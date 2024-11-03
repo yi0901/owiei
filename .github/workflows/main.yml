@@ -14,8 +14,7 @@ jobs:
       matrix:
         script:
           - 'code/buslondon.py'
-          - 'code/econy.py'
-          - 'code/busny.py'
+          
 
     steps:
     - name: Checkout repository
