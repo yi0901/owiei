@@ -6,7 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, NoSuchWindowException, StaleElementReferenceException, ElementClickInterceptedException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
@@ -50,6 +50,28 @@ options.add_argument("--headless")
 service = Service("/usr/bin/chromedriver")
 driver = webdriver.Chrome(service=service, options=options)
 
+def scroll_to_element(element):
+    driver.execute_script("arguments[0].scrollIntoView(true);", element)
+
+def click_element(element):
+    try:
+        element.click()
+        return True
+    except ElementClickInterceptedException:
+        print("元素被遮擋，嘗試滾動到元素位置")
+        scroll_to_element(element)
+        time.sleep(1)
+        try:
+            element.click()
+            return True
+        except ElementClickInterceptedException:
+            print("使用 JavaScript 點擊元素")
+            driver.execute_script("arguments[0].click();", element)
+            return True
+    except Exception as e:
+        print(f"點擊元素失敗: {e}")
+        return False
+
 def scrape_flights(start_date_str, end_date_str):
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
@@ -69,7 +91,7 @@ def scrape_flights(start_date_str, end_date_str):
             departure_date_picker = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.CLASS_NAME, 'TP4Lpb'))
             )
-            departure_date_picker.click()
+            click_element(departure_date_picker)
             print("成功點擊出發日期選擇器")
         except Exception as e:
             print("無法找到出發日期選擇器", e)
@@ -81,7 +103,7 @@ def scrape_flights(start_date_str, end_date_str):
             specific_date = WebDriverWait(driver, 20).until(
                 EC.element_to_be_clickable((By.XPATH, f"//div[@class='WhDFk Io4vne' and @data-iso='{current_date.strftime('%Y-%m-%d')}']//div[@role='button']"))
             )
-            specific_date.click()
+            click_element(specific_date)
             print(f"成功選擇出發日期 {current_date.strftime('%Y 年 %m 月 %d 日')}")
         except Exception as e:
             # 嘗試使用其他 XPath 來選擇日期
@@ -89,7 +111,7 @@ def scrape_flights(start_date_str, end_date_str):
                 specific_date = WebDriverWait(driver, 20).until(
                     EC.element_to_be_clickable((By.XPATH, f"//div[@class='WhDFk Io4vne Xu6rJc' and @data-iso='{current_date.strftime('%Y-%m-%d')}']//div[@role='button']"))
                 )
-                specific_date.click()  # 點擊特定的 12/31 日期
+                click_element(specific_date)  # 點擊特定的 12/31 日期
                 print(f"成功選擇出發日期 {current_date.strftime('%Y 年 %m 月 %d 日')}")
 
             except Exception as e:
@@ -97,7 +119,7 @@ def scrape_flights(start_date_str, end_date_str):
                     specific_date = WebDriverWait(driver, 20).until(
                         EC.element_to_be_clickable((By.XPATH, f"//div[@class='WhDFk Io4vne inxqCf' and @data-iso='{current_date.strftime('%Y-%m-%d')}']//div[@role='button']"))
                     )
-                    specific_date.click()  # 點擊特定的 01/01 日期
+                    click_element(specific_date)  # 點擊特定的 01/01 日期
                     print(f"成功選擇出發日期 {current_date.strftime('%Y 年 %m 月 %d 日')}")
 
                 except Exception as e:
@@ -110,7 +132,7 @@ def scrape_flights(start_date_str, end_date_str):
             done_button = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, '//div[@class="WXaAwc"]//div//button'))
             )
-            done_button.click()
+            click_element(done_button)
             print("成功點擊 'Done' 按鈕")
         except Exception as e:
             print("無法找到 'Done' 按鈕", e)
@@ -150,7 +172,13 @@ def scrape_flights(start_date_str, end_date_str):
                     
                     # 點擊航班更多資訊
                     flight_buttons = flight_element.find_elements(By.XPATH, ".//div[@class='vJccne  trZjtf']//div[@class='VfPpkd-dgl2Hf-ppHlrf-sM5MNb']//button")
-                    flight_buttons[0].click()  # 點擊第一個按鈕
+                    if flight_buttons:
+                        button = flight_buttons[0]
+                        scroll_to_element(button)
+                        time.sleep(1)
+                        if not click_element(button):
+                            print(f"無法點擊第 {index + 1} 個航班")
+                            continue
                     
                     # 等待頁面加載
                     time.sleep(1)
@@ -279,11 +307,12 @@ try:
     # 調用函式
     success_count = scrape_flights(start_date_input, end_date_input)
     # 發送成功通知
-    #send_discord_notification(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
+   # send_discord_notification(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
 except Exception as e:
     # 發送錯誤通知
-    #send_discord_notification(f"航班抓取失敗: {e}")
+   # send_discord_notification(f"航班抓取失敗: {e}")
     success_count = 0  # 確保異常時 success_count 也被初始化
 
 # 顯示抓取的總航班數量
 print(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
+  
