@@ -18,13 +18,13 @@ import re
 #WEBHOOK_URL = "https://discord.com/api/webhooks/1295434884361228450/zwTbBwZK3hryiEqFiCa6HWGXzZtWHRldTizl4BUNyZcw_0IHb94kbmikoKwOeFObbGBk"
 
 # 發送 Discord 通知的函數
-def send_discord_notification(message):
-    data = {"content": message}
-    response = requests.post(WEBHOOK_URL, data=json.dumps(data), headers={"Content-Type": "application/json"})
-    if response.status_code == 204:
-        logging.info("Discord 通知發送成功")
-    else:
-        logging.error(f"Failed to send Discord notification: {response.status_code}, {response.text}")
+#def send_discord_notification(message):
+ #   data = {"content": message}
+  #  response = requests.post(WEBHOOK_URL, data=json.dumps(data), headers={"Content-Type": "application/json"})
+   # if response.status_code == 204:
+    #    logging.info("Discord 通知發送成功")
+    #else:
+     #   logging.error(f"Failed to send Discord notification: {response.status_code}, {response.text}")
 
 def calculate_dates(today_date_str):
     today = datetime.strptime(today_date_str, "%Y-%m-%d")
@@ -279,10 +279,10 @@ try:
     # 調用函式
     success_count = scrape_flights(start_date_input, end_date_input)
     # 發送成功通知
-    send_discord_notification(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
+    #send_discord_notification(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
 except Exception as e:
     # 發送錯誤通知
-    send_discord_notification(f"航班抓取失敗: {e}")
+    #send_discord_notification(f"航班抓取失敗: {e}")
     success_count = 0  # 確保異常時 success_count 也被初始化
 
 # 顯示抓取的總航班數量
