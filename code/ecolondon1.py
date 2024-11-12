@@ -315,4 +315,4 @@ except Exception as e:
     success_count = 0  # 確保異常時 success_count 也被初始化
 
 # 顯示抓取的總航班數量
-print(f"共抓取 {success_count} 個航班，日期範圍: {start_date} 到 {end_date}")
+#print(f"共抓取 {success_count} 個航班，日期範圍: {start_date} 到 {end_date}")
