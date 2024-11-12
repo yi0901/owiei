@@ -28,15 +28,15 @@ import re
 
 def calculate_dates(today_date_str):
     today = datetime.strptime(today_date_str, "%Y-%m-%d")
-    start_date = datetime(2025, 2, 01)
+    start_date = datetime(2025, 2, 1)
     end_date = start_date + timedelta(days=(today - datetime(2024, 10, 21)).days)
 
     # 如果是 2024-12-20 及以後，結束日期固定為 2025-03-21
     if today >= datetime(2024, 12, 20):
         end_date = datetime(2025, 3, 21)
         # 2025-01-20 之後，起始日開始遞增
-        if today >= datetime(2025, 2, 01):
-            start_date += timedelta(days=(today - datetime(2025, 2, 01)).days)
+        if today >= datetime(2025, 2, 1):
+            start_date += timedelta(days=(today - datetime(2025, 2, 1)).days)
 
     return start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
 
