@@ -13,7 +13,7 @@ jobs:
       max-parallel: 2  # 一次最多執行兩個腳本
       matrix:
         script:
-          - 'code/busny1.py'
+          - 'code/ecolondon2.py'
           
 
     steps:
