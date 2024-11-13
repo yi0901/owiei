@@ -25,20 +25,18 @@ import re
     #    logging.info("Discord 通知發送成功")
     #else:
      #   logging.error(f"Failed to send Discord notification: {response.status_code}, {response.text}")
-
-def calculate_dates(today_date_str):
-    today = datetime.strptime(today_date_str, "%Y-%m-%d")
-    start_date = datetime(2025, 2, 1)
-    end_date = start_date + timedelta(days=(today - datetime(2024, 10, 21)).days)
+#*def calculate_dates(today_date_str):
+ #   today = datetime.strptime(today_date_str, "%Y-%m-%d")
+  # end_date = start_date + timedelta(days=(today - datetime(2024, 10, 21)).days)
 
     # 如果是 2024-12-20 及以後，結束日期固定為 2025-03-21
-    if today >= datetime(2024, 12, 20):
-        end_date = datetime(2025, 3, 21)
+  #  if today >= datetime(2024, 12, 20):
+   #     end_date = datetime(2025, 3, 21)
         # 2025-01-20 之後，起始日開始遞增
-        if today >= datetime(2025, 2, 1):
-            start_date += timedelta(days=(today - datetime(2025, 2, 1)).days)
+    #    if today >= datetime(2025, 1, 20):
+     #       start_date += timedelta(days=(today - datetime(2025, 1, 20)).days)
 
-    return start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
+#    return start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
 
 # 設置 Selenium 驅動
 options = Options()
@@ -71,7 +69,8 @@ def click_element(element):
     except Exception as e:
         print(f"點擊元素失敗: {e}")
         return False
-
+start_date = "2025-02-04"
+end_date = "2025-02-12"
 def scrape_flights(start_date_str, end_date_str):
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
@@ -83,7 +82,7 @@ def scrape_flights(start_date_str, end_date_str):
     while current_date <= end_date:
         print(f"正在抓取日期: {current_date.strftime('%Y-%m-%d')}")
 
-        url = "https://www.google.com/travel/flights/search?tfs=CBwQAholEgoyMDI1LTAxLTE5KAFqDAgCEggvbS8wZnRreHIHCAESA0xIUkABSAFwAYIBCwj___________8BmAEC&tfu=EgYIBRABGAA&hl=zh-TW&gl=TW"
+        url = "https://www.google.com/travel/flights/search?tfs=CBwQAholEgoyMDI1LTAxLTE3KAFqDAgCEggvbS8wZnRreHIHCAESA0xIUkABSAFwAYIBCwj___________8BmAEC&tfu=EgQIABABIgA"
         driver.get(url)
 
         # 點擊日期選擇器
@@ -299,13 +298,13 @@ def scrape_flights(start_date_str, end_date_str):
     return success_count
 
 # 根據當前日期計算動態起始日與結束日
-today_str = datetime.now().strftime("%Y-%m-%d")
-start_date_input, end_date_input = calculate_dates(today_str)
+#today_str = datetime.now().strftime("%Y-%m-%d")
+#start_date_input, end_date_input = calculate_dates(today_str)
 
 try:
     success_count = 0  # 初始化 success_count
     # 調用函式
-    success_count = scrape_flights(start_date_input, end_date_input)
+    success_count = scrape_flights(start_date, end_date)
     # 發送成功通知
    # send_discord_notification(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
 except Exception as e:
@@ -314,4 +313,4 @@ except Exception as e:
     success_count = 0  # 確保異常時 success_count 也被初始化
 
 # 顯示抓取的總航班數量
-print(f"共抓取 {success_count} 個航班，日期範圍: {start_date_input} 到 {end_date_input}")
+print(f"共抓取 {success_count} 個航班，日期範圍: {start_date} 到 {end_date}")
