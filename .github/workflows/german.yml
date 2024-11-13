@@ -1,4 +1,4 @@
-name: Run Python Scripts Automatically in busny
+name: Run Python Scripts Automatically in german
 
 on:
   schedule:
