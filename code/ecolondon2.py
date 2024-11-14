@@ -70,7 +70,7 @@ def click_element(element):
         print(f"點擊元素失敗: {e}")
         return False
 start_date = "2025-02-04"
-end_date = "2025-02-12"
+end_date = "2025-02-13"
 def scrape_flights(start_date_str, end_date_str):
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
@@ -82,7 +82,7 @@ def scrape_flights(start_date_str, end_date_str):
     while current_date <= end_date:
         print(f"正在抓取日期: {current_date.strftime('%Y-%m-%d')}")
 
-        url = "https://www.google.com/travel/flights/search?tfs=CBwQAholEgoyMDI1LTAxLTE3KAFqDAgCEggvbS8wZnRreHIHCAESA0xIUkABSAFwAYIBCwj___________8BmAEC&tfu=EgQIABABIgA"
+        url = "https://www.google.com/travel/flights/search?tfs=CBwQAholEgoyMDI1LTAxLTE5KAFqDAgCEggvbS8wZnRreHIHCAESA0xIUkABSAFwAYIBCwj___________8BmAEC&tfu=EgYIABABGAA&hl=zh-TW"
         driver.get(url)
 
         # 點擊日期選擇器
