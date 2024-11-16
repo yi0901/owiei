@@ -1,5 +1,4 @@
-name: Run Python Scripts Automatically in busny
-
+name: BUSLONDON2
 on:
   schedule:
     # 每日台灣時間13:00
