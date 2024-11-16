@@ -1,4 +1,4 @@
-name: Run Python Scripts Automatically in longterm
+name: ECONY
 
 on:
   schedule:
