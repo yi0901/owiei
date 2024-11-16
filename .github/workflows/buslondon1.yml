@@ -1,4 +1,4 @@
-name: Run Python Scripts Automatically in buslondon
+name: BUSLONDON1
 
 on:
   schedule:
