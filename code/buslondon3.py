@@ -70,7 +70,7 @@ def click_element(element):
         print(f"點擊元素失敗: {e}")
         return False
 start_date = "2025-02-15"
-end_date = "2025-03-01"
+end_date = "2025-03-02"
 def scrape_flights(start_date_str, end_date_str):
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
@@ -152,7 +152,7 @@ def scrape_flights(start_date_str, end_date_str):
             os.makedirs(output_directory)
         
         # 準備寫入 CSV 檔案
-        with open(f'{output_directory}/buslondon2_{today_date}.csv', 'a', newline='', encoding='utf-8-sig') as csv_file:
+        with open(f'{output_directory}/buslondon3_{today_date}.csv', 'a', newline='', encoding='utf-8-sig') as csv_file:
             csv_writer = csv.writer(csv_file)
 
             # 寫入標題
