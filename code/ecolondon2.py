@@ -160,7 +160,7 @@ def scrape_flights(start_date_str, end_date_str):
                 "出發日期", "出發時間", "出發機場代號", 
                 "抵達時間", "抵達機場代號", "航空公司", 
                 "停靠站數量", "停留時間", "飛行時間", 
-                "是否過夜", "機型", "航班代碼", "艙等", "價格"
+                "是否過夜", "機型", "航班代碼", "艙等", "價格","第一段飛行時間","第二段飛行時間"
             ])
 
             # 遍歷並點擊每個航班
@@ -367,7 +367,7 @@ def scrape_flights(start_date_str, end_date_str):
                             arrival_time, arrival_airport, airline,
                             layover, layover_time, flight_duration,
                             overnight, aircraft, flight_number, cabin_class,
-                            price
+                            price,,first_flight_duration,second_flight_duration
                         ])
 
                         success_count += 1
