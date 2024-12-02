@@ -367,7 +367,7 @@ def scrape_flights(start_date_str, end_date_str):
                             arrival_time, arrival_airport, airline,
                             layover, layover_time, flight_duration,
                             overnight, aircraft, flight_number, cabin_class,
-                            price,,first_flight_duration,second_flight_duration
+                            price,first_flight_duration,second_flight_duration
                         ])
 
                         success_count += 1
