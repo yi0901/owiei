@@ -222,7 +222,19 @@ def scrape_flights(start_date_str, end_date_str):
                             layover = "Non-stop"
 
                         if layover != "直達航班。":
-                           
+                           try:
+                                # 嘗試抓取停留時間的內部 HTML
+                                layover_info_element = flight_element.find_element(By.XPATH, './/div[@class = "tvtJdb eoY5cb y52p7d"]').get_attribute("innerHTML")
+                                time_pattern = r'(\d+\s*(小時|hr|hours)\s*\d+\s*(分鐘|min|minutes)|\d+\s*(小時|hr|hours)|\d+\s*(分鐘|min|minutes))'
+                                match = re.search(time_pattern, layover_info_element)
+                                layover_time = match.group(1) if match else "未找到停留時間"
+                                if not match:
+                                    print("未找到停留時間的 HTML:", layover_info_element)
+                            except NoSuchElementException:
+                                    layover_time = "未找到停留時間"
+                        else:
+                            layover_time = "Non-stop"
+                         
                         try:
                             # 檢查是否有 "Overnight" 元素
                             overnight_element = flight_element.find_element(By.XPATH, './/div[@class="qj0iCb" and contains(text(), "Overnight")]').get_attribute("innerHTML")
@@ -267,7 +279,7 @@ def scrape_flights(start_date_str, end_date_str):
                             arrival_time, arrival_airport, airline,
                             layover, layover_time, flight_duration,
                             overnight, aircraft, flight_number, cabin_class,
-                            price,first_flight_duration,second_flight_duration
+                            price
                         ])
 
                         success_count += 1
