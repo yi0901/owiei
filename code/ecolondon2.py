@@ -70,7 +70,7 @@ def click_element(element):
         print(f"點擊元素失敗: {e}")
         return False
 start_date = "2025-02-04"
-end_date = "2025-02-16"
+end_date = "2025-02-20"
 def scrape_flights(start_date_str, end_date_str):
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
@@ -234,6 +234,7 @@ def scrape_flights(start_date_str, end_date_str):
                                     layover_time = "未找到停留時間"
                         else:
                             layover_time = "Non-stop"
+                         
                         first_flight_duration = "未找到第一段飛行時間"
                         second_flight_duration = "未找到第二段飛行時間"
                         try: # 抓取所有符合條件的飛行時間元素 
@@ -321,7 +322,6 @@ def scrape_flights(start_date_str, end_date_str):
                                 return segments[0] if durations[0] >= durations[1] else segments[1]
                             except Exception:
                                 return None  # 發生例外時，返回 None                      
-
 
                         try:
                             # 檢查是否有 "Overnight" 元素
