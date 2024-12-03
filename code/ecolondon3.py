@@ -70,7 +70,7 @@ def click_element(element):
         print(f"點擊元素失敗: {e}")
         return False
 start_date = "2025-02-17"
-end_date = "2025-03-02"
+end_date = "2025-02-28"
 def scrape_flights(start_date_str, end_date_str):
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
@@ -160,7 +160,7 @@ def scrape_flights(start_date_str, end_date_str):
                 "出發日期", "出發時間", "出發機場代號", 
                 "抵達時間", "抵達機場代號", "航空公司", 
                 "停靠站數量", "停留時間", "飛行時間", 
-                "是否過夜", "機型", "航班代碼", "艙等", "價格","第一段飛行時間","第二段飛行時間"
+                "是否過夜", "機型", "航班代碼", "艙等", "價格"
             ])
 
             # 遍歷並點擊每個航班
@@ -222,107 +222,7 @@ def scrape_flights(start_date_str, end_date_str):
                             layover = "Non-stop"
 
                         if layover != "直達航班。":
-                            try:
-                                # 嘗試抓取停留時間的內部 HTML
-                                layover_info_element = flight_element.find_element(By.XPATH, './/div[@class = "tvtJdb eoY5cb y52p7d"]').get_attribute("innerHTML")
-                                time_pattern = r'(\d+\s*(小時|hr|hours)\s*\d+\s*(分鐘|min|minutes)|\d+\s*(小時|hr|hours)|\d+\s*(分鐘|min|minutes))'
-                                match = re.search(time_pattern, layover_info_element)
-                                layover_time = match.group(1) if match else "未找到停留時間"
-                                if not match:
-                                    print("未找到停留時間的 HTML:", layover_info_element)
-                            except NoSuchElementException:
-                                    layover_time = "未找到停留時間"
-                        else:
-                            layover_time = "Non-stop"
-                        first_flight_duration = "未找到第一段飛行時間"
-                        second_flight_duration = "未找到第二段飛行時間"
-                        try: # 抓取所有符合條件的飛行時間元素 
-                            flight_durations = flight_element.find_elements(By.XPATH, ".//div[@class='P102Lb sSHqwe y52p7d']") 
-                            if len(flight_durations) >= 1: 
-                                first_flight_duration = flight_durations[0].get_attribute("innerHTML") 
-                                match = re.search(r'(\d+\s*(小時|hours?|hr)\s*\d+\s*(分鐘|minutes?|min)?|\d+\s*(小時|hours?|hr)|\d+\s*(分鐘|minutes?|min))', first_flight_duration) 
-                                first_flight_duration = match.group(1) if match else "未找到第一段飛行時間" 
-                            #else: first_flight_duration = "未找到第一段飛行時間" 
-                            if len(flight_durations) >= 2: 
-                                second_flight_duration = flight_durations[1].get_attribute("innerHTML") 
-                                match = re.search(r'(\d+\s*(小時|hours?|hr)\s*\d+\s*(分鐘|minutes?|min)?|\d+\s*(小時|hours?|hr)|\d+\s*(分鐘|minutes?|min))', second_flight_duration) 
-                                second_flight_duration = match.group(1) if match else "未找到第二段飛行時間" 
-                                #else:  second_flight_duration = "未找到第二段飛行時間" 
-                        except Exception as e: 
-                            first_flight_duration = "抓取過程發生錯誤" 
-                            second_flight_duration = "抓取過程發生錯誤" 
-                            print(f"錯誤詳情: {str(e)}")    
-                        
-                        # 定義解析主航段邏輯的函數
-                        def process_main_segment(row, column_name):
-                            """處理航空公司或艙等的主要段落"""
-                            value = row[column_name]
-                            if not isinstance(value, str):
-                                return value  # 如果不是字串類型，直接返回原值
-
-                            # 特殊處理：針對「亞洲航空 X 亞洲航空 X」的情況
-                            if value == "亞洲航空 X 亞洲航空 X":
-                                return "亞洲航空 X"  # 直接返回處理後的結果
-
-                            # 若前後相同，直接返回其中一個
-                            value = " ".join(value.split())
-                            unique_segments = set(value.split(" "))
-                            if len(unique_segments) == 1:  # 所有部分相同
-                                return value.split(" ")[0]
-
-                            # 正常處理兩段邏輯
-                            segments = value.split(" ")
-                            if len(segments) == 2:
-                                try:
-                                    first_duration = parse_duration(row["第一段飛行時間"])
-                                    second_duration = parse_duration(row["第二段飛行時間"])
-                                    return segments[0] if first_duration >= second_duration else segments[1]
-                                except Exception:
-                                    return None
-                            return value
-
-                        def parse_duration(duration_str):
-                            """解析飛行時間字串，轉換為總分鐘數"""
-                            hours, minutes = 0, 0
-                            if "小時" in duration_str:
-                                hours = int(duration_str.split("小時")[0].strip())
-                                duration_str = duration_str.split("小時")[1]
-                            if "分鐘" in duration_str:
-                                minutes = int(duration_str.split("分鐘")[0].strip())
-                            return hours * 60 + minutes
-
-                        def process_second_segment(row, column_name):
-                            value = row[column_name]
-                            # 確保值為字串，否則返回原始值
-                            if not isinstance(value, str):
-                                return value  # 如果不是字串類型，直接返回原值
-                            # 使用正則表達式來精確分段
-                            segments = re.findall(r'[^\s]+\s[^\s]+', value)
-                            if len(segments) != 2:
-                                return value  # 如果無法分辨兩段，保留原始值
-                            try:
-                                durations = [parse_duration(row["第一段飛行時間"]), parse_duration(row["第二段飛行時間"])]
-                                return segments[0] if durations[0] >= durations[1] else segments[1]
-                            except Exception:
-                                return None  # 發生例外時，返回 None
-
-                       
-                        def process_second_segment(row, column_name):
-                            value = row[column_name]
-                            # 確保值為字串，否則返回原始值
-                            if not isinstance(value, str):
-                                return value  # 如果不是字串類型，直接返回原值
-                            # 使用正則表達式來精確分段
-                            segments = re.findall(r'[^\s]+\s[^\s]+', value)
-                            if len(segments) != 2:
-                                return value  # 如果無法分辨兩段，保留原始值
-                            try:
-                                durations = [parse_duration(row["第一段飛行時間"]), parse_duration(row["第二段飛行時間"])]
-                                return segments[0] if durations[0] >= durations[1] else segments[1]
-                            except Exception:
-                                return None  # 發生例外時，返回 None                      
-
-
+                           
                         try:
                             # 檢查是否有 "Overnight" 元素
                             overnight_element = flight_element.find_element(By.XPATH, './/div[@class="qj0iCb" and contains(text(), "Overnight")]').get_attribute("innerHTML")
