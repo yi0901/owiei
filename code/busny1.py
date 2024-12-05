@@ -69,8 +69,8 @@ def click_element(element):
     except Exception as e:
         print(f"點擊元素失敗: {e}")
         return False
-start_date = "2025-02-04"
-end_date = "2025-02-10"
+start_date = "2025-01-20"
+end_date = "2025-02-03"
 def scrape_flights(start_date_str, end_date_str):
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
