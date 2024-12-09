@@ -234,8 +234,8 @@ def scrape_flights(start_date_str, end_date_str):
                                     layover_time = "未找到停留時間"
                         else:
                             layover_time = "Non-stop"
-                          
-
+                         
+                     
                         try:
                             # 檢查是否有 "Overnight" 元素
                             overnight_element = flight_element.find_element(By.XPATH, './/div[@class="qj0iCb" and contains(text(), "Overnight")]').get_attribute("innerHTML")
