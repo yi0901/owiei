@@ -1,0 +1,54 @@
+name: BUSNYT3
+
+on:
+  schedule:
+    # 每日台灣時間13:00
+    - cron: '0 22 * * *'  # 注意: GitHub Actions 使用 UTC 時間，台灣時間早上6點相當於 UTC 22:00
+
+jobs:
+  run-scripts:
+    runs-on: ubuntu-latest
+
+    strategy:
+      max-parallel: 2  # 一次最多執行兩個腳本
+      matrix:
+        script:
+          - 'code/busnyt3.py'
+          
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4  # 確保使用最新
+
+    - name: Set up Python
+      uses: actions/setup-python@v5  # 升级到 v5 版本以支持 Node.js 20
+      with:
+        python-version: '3.x'
+
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install selenium requests
+
+    - name: Install ChromeDriver
+      run: |
+        sudo apt-get update
+        sudo apt-get install --reinstall -y chromium-chromedriver
+        if [ -L /usr/bin/chromedriver ]; then
+          sudo rm /usr/bin/chromedriver  # 如果存在符號連結，則刪除
+        fi
+        sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver || true  # 強制創建新的符號連結
+
+    - name: Set ChromeDriver Path
+      run: echo "CHROMEWEBDRIVER=/usr/bin" >> $GITHUB_ENV  # 設置環境變量
+
+    - name: Run script
+      run: |
+        python ${{ matrix.script }}  # 動態運行 Python 腳本
+
+    - name: Upload CSV as artifacts
+      uses: actions/upload-artifact@v3  # 使用最新版本
+      with:
+        name: flight-data
+        path: data/*.csv  # 上傳所有生成的 CSV 文件
